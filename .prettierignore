@@ -1,0 +1,27 @@
+# base
+.eslintrc.json
+README.md
+package.json
+package-lock.json
+
+
+
+# TS
+tsconfig.json
+*.d.ts
+
+# next
+.next
+next.config.js
+
+# folders
+node_modules
+public
+styles
+
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
