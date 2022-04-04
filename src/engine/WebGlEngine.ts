@@ -9,12 +9,15 @@ export interface WebGlEngineDef {
 export class WebGlEngine {
   readonly def: WebGlEngineDef;
   private canvasEl: HTMLCanvasElement;
-  private stepFunc: undefined | number;
   private lastUpdateTime: number;
   private gl: WebGL2RenderingContext;
 
+  private sprite: Sprite;
+
   constructor(def: WebGlEngineDef) {
     this.def = def;
+
+    this.stop();
 
     const prevCanvas = this.def.rootEl.firstElementChild;
     if (prevCanvas === null || prevCanvas.tagName !== "CANVAS") {
@@ -23,7 +26,6 @@ export class WebGlEngine {
       this.canvasEl.height = 600;
       this.canvasEl.width = 800;
 
-      this.stepFunc = undefined;
       this.lastUpdateTime = 0;
 
       this.def.rootEl.append(this.canvasEl);
@@ -38,8 +40,9 @@ export class WebGlEngine {
     }
 
     this.gl = gl;
+    this.gl.clearColor(0.4, 0.6, 1.0, 1.0);
 
-    const sprite = new Sprite(this.gl, {
+    this.sprite = new Sprite(this.gl, {
       imgUrl: "/sprites/SlimeWalkSheet.png",
       vsSource: basicShader.vsSource,
       fsSource: basicShader.fsSource,
@@ -49,23 +52,31 @@ export class WebGlEngine {
   start() {
     const step = () => {
       this.update();
-      this.stepFunc = requestAnimationFrame(step);
+
+      // @ts-ignore
+      window.stepFunc = requestAnimationFrame(step);
     };
     step();
   }
 
   stop() {
-    if (this.stepFunc !== undefined) {
-      window.cancelAnimationFrame(this.stepFunc);
+    // @ts-ignore
+    if (window.stepFunc !== undefined) {
+      // @ts-ignore
+      window.cancelAnimationFrame(window.stepFunc);
     }
-    this.stepFunc = undefined;
+    // @ts-ignore
+    window.stepFunc = undefined;
   }
 
   update() {
     this.gl.viewport(0, 0, this.canvasEl.width, this.canvasEl.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+
+    this.sprite.render();
 
     this.gl.flush();
   }

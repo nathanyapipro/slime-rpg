@@ -27,7 +27,7 @@ export default function MyApp(props: MyAppProps) {
           minHeight: "100vh",
         },
         canvas: {
-          backgroundColor: "black",
+          // backgroundColor: "black",
         },
       }}
     />
