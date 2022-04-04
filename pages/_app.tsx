@@ -26,6 +26,9 @@ export default function MyApp(props: MyAppProps) {
           flex: "1 1 0",
           minHeight: "100vh",
         },
+        canvas: {
+          backgroundColor: "black",
+        },
       }}
     />
   );
