@@ -4,6 +4,12 @@ import { WebGlEngine } from "./engine/WebGlEngine";
 
 type Props = {};
 
+declare global {
+  interface Window {
+    engine: WebGlEngine;
+  }
+}
+
 const Engine: React.FC<Props> = () => {
   const ref = React.useRef<HTMLDivElement>(null);
   const [engine, setEngine] = useState<WebGlEngine | undefined>();
@@ -14,6 +20,7 @@ const Engine: React.FC<Props> = () => {
     }
 
     const webGlEngine = new WebGlEngine({ rootEl: ref.current });
+    window.engine = webGlEngine;
     webGlEngine.start();
     setEngine(webGlEngine);
 

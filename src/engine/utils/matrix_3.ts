@@ -315,4 +315,18 @@ export class Matrix3 {
   getRotation(): number {
     return this.decompose().rotation;
   }
+
+  getFloatArray(): Float32Array {
+    return new Float32Array([
+      this.a,
+      this.b,
+      0,
+      this.c,
+      this.d,
+      0,
+      this.tx,
+      this.ty,
+      1,
+    ]);
+  }
 }
