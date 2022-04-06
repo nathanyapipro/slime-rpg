@@ -1,5 +1,4 @@
-import { Material } from "./core/material_";
-import { Sprite } from "./core/sprite_";
+import { Sprite } from "./core/sprite";
 import * as basicShader from "./shaders/basic";
 import { Matrix3, Vector2 } from "./utils";
 
