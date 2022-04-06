@@ -1,5 +1,5 @@
 import { Matrix3, Vector2 } from "../utils";
-import { Material } from "./material_";
+import { Material } from "./material";
 
 export interface SpriteDef {
   imgUrl: string;
@@ -19,12 +19,6 @@ export class Sprite {
   private glTexture?: WebGLTexture;
   private geoBuffer?: WebGLBuffer;
   private texBuffer?: WebGLBuffer;
-  private aTexCoordLoc?: number;
-  private aPositionLoc?: number;
-  private uImageLoc?: WebGLUniformLocation;
-  private uWorldLoc?: WebGLUniformLocation;
-  private uObjectLoc?: WebGLUniformLocation;
-  private uFrameLoc?: WebGLUniformLocation;
   private size: Vector2;
   private uv?: Vector2;
 
@@ -149,57 +143,19 @@ export class Sprite {
       gl.STATIC_DRAW
     );
 
-    this.aPositionLoc = gl.getAttribLocation(
-      this.material.program,
-      "a_position"
-    );
-    this.aTexCoordLoc = gl.getAttribLocation(
-      this.material.program,
-      "a_texCoord"
-    );
-
-    const uImageLoc = gl.getUniformLocation(this.material.program, "u_image");
-    if (uImageLoc === null) {
-      throw new Error(`Unable to fund uniform location: ${"u_image"}`);
-    }
-    this.uImageLoc = uImageLoc;
-
-    const uFrameLoc = gl.getUniformLocation(this.material.program, "u_frame");
-    if (uFrameLoc === null) {
-      throw new Error(`Unable to fund uniform location: ${"u_frame"}`);
-    }
-    this.uFrameLoc = uFrameLoc;
-
-    const uWorldLoc = gl.getUniformLocation(this.material.program, "u_world");
-    if (uWorldLoc === null) {
-      throw new Error(`Unable to fund uniform location: ${"u_world"}`);
-    }
-    this.uWorldLoc = uWorldLoc;
-
-    const uObjectLoc = gl.getUniformLocation(this.material.program, "u_object");
-    if (uObjectLoc === null) {
-      throw new Error(`Unable to fund uniform location: ${"u_object"}`);
-    }
-    this.uObjectLoc = uObjectLoc;
-
     gl.useProgram(null);
 
     this.isLoaded = true;
   }
 
   render(params: { position: Vector2; frame: Vector2 }) {
+    const gl = this.gl;
     if (
       this.isLoaded === false ||
       this.uv === undefined ||
       this.glTexture === undefined ||
-      this.uImageLoc === undefined ||
-      this.aTexCoordLoc === undefined ||
       this.texBuffer === undefined ||
-      this.geoBuffer === undefined ||
-      this.aPositionLoc === undefined ||
-      this.uWorldLoc === undefined ||
-      this.uObjectLoc === undefined ||
-      this.uFrameLoc === undefined
+      this.geoBuffer === undefined
     ) {
       return;
     }
@@ -213,26 +169,23 @@ export class Sprite {
     const objectMatrix = new Matrix3();
     objectMatrix.translateByVector(position);
 
-    const gl = this.gl;
     gl.useProgram(this.material.program);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.glTexture);
-    gl.uniform1i(this.uImageLoc, 0);
+    this.material.setParameter("u_image", 0);
 
     // add texture buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, this.texBuffer);
-    gl.enableVertexAttribArray(this.aTexCoordLoc);
-    gl.vertexAttribPointer(this.aTexCoordLoc, 2, gl.FLOAT, false, 0, 0);
+    this.material.setParameter("a_texCoord");
 
     // add geo buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, this.geoBuffer);
-    gl.enableVertexAttribArray(this.aPositionLoc);
-    gl.vertexAttribPointer(this.aPositionLoc, 2, gl.FLOAT, false, 0, 0);
+    this.material.setParameter("a_position");
 
-    gl.uniform2f(this.uFrameLoc, frameX, frameY);
-    gl.uniformMatrix3fv(this.uWorldLoc, false, worldSpace.getFloatArray());
-    gl.uniformMatrix3fv(this.uObjectLoc, false, objectMatrix.getFloatArray());
+    this.material.setParameter("u_frame", frameX, frameY);
+    this.material.setParameter("u_world", worldSpace.getFloatArray());
+    this.material.setParameter("u_object", objectMatrix.getFloatArray());
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 6);
 
