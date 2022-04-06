@@ -1,5 +1,5 @@
-import { Material } from "./core/Material";
-import { Sprite } from "./core/Sprite";
+import { Material } from "./core/material_";
+import { Sprite } from "./core/sprite_";
 import * as basicShader from "./shaders/basic";
 import { Matrix3, Vector2 } from "./utils";
 
@@ -101,7 +101,6 @@ export class WebGlEngine {
   private resize(width: number, height: number) {
     this.canvasEl.width = width;
     this.canvasEl.height = height;
-    console.log(width, height);
 
     // identity
     this.worldSpaceMatrix = new Matrix3();

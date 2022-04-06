@@ -1,5 +1,5 @@
 import { Matrix3, Vector2 } from "../utils";
-import { Material } from "./Material";
+import { Material } from "./material_";
 
 export interface SpriteDef {
   imgUrl: string;

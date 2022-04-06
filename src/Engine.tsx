@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/system";
-import { WebGlEngine } from "./engine/WebGlEngine";
+import { WebGlEngine } from "./engine/web_gl_engine";
 
 type Props = {};
 
